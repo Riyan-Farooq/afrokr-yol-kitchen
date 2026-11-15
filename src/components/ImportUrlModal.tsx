@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import type { Recipe, User, Ingredient, RecipeStep } from '../types';
+import { supabase } from '../lib/supabase';
 import { getCountryFlag } from '../utils/countryFlags';
 
 interface ImportUrlModalProps {
@@ -91,7 +92,6 @@ function parseDuration(value?: string | number | null): number {
 
   const text = String(value).trim();
 
-  // ISO 8601 durations, for example PT10M or PT1H20M.
   const iso = text.match(
     /^PT(?:(\d+(?:\.\d+)?)H)?(?:(\d+(?:\.\d+)?)M)?$/i
   );
@@ -130,7 +130,7 @@ function getAisle(name: string): Ingredient['aisle'] {
     return 'Condiments & Huiles';
   }
 
-  if (/flour|farine|rice|riz|plantain|plantain|potato|pomme de terre|pasta|pâtes/.test(value)) {
+  if (/flour|farine|rice|riz|plantain|potato|pomme de terre|pasta|pâtes/.test(value)) {
     return 'Féculents & Racines';
   }
 
@@ -233,7 +233,6 @@ function mapRecipe(
       `@${currentUser.name.toLowerCase().replace(/\s+/g, '_')}`,
     authorRole: currentUser.role,
 
-    // The scraper does not currently establish the recipe's country.
     country: data.cuisine || '',
     countryFlag: data.cuisine ? getCountryFlag(data.cuisine) : '🌍',
 
@@ -299,10 +298,22 @@ export const ImportUrlModal: React.FC<ImportUrlModalProps> = ({
     setError('');
 
     try {
+      // Get the current authenticated Supabase session.
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (sessionError || !sessionData.session?.access_token) {
+        throw new Error('Veuillez vous connecter pour continuer.');
+      }
+
+      const accessToken = sessionData.session.access_token;
+
+      // Send the access token to the backend for authentication.
       const response = await fetch(`${API_URL}/api/agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           agent_type: 'recipe',
