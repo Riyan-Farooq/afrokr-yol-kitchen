@@ -435,7 +435,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({
             }`}
           >
             <Utensils className="w-3.5 h-3.5 text-[#FF4E27]" />
-            <span>Recettes ({recipes.length})</span>
+            <span>Recipe Management ({recipes.length})</span>
           </button>
 
           <button
