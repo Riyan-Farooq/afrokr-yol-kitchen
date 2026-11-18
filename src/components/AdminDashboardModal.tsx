@@ -59,7 +59,8 @@ import {
   Globe2,
   UserCheck,
   Megaphone,
-  Video
+  Video,
+  Bot
 } from 'lucide-react';
 import { 
   User, 
@@ -84,6 +85,7 @@ import {
 import { MediaCampaignAnalytics } from './MediaCampaignAnalytics';
 import { AdminAdManager } from './AdminAdManager';
 import { AdminPricingManager } from './AdminPricingManager';
+import { AIAgentsConfigPanel } from './admin/AIAgentsConfigPanel';
 import { 
   MEDIA_CAMPAIGN_ANALYTICS, 
   downloadMediaReportCsv, 
@@ -137,7 +139,8 @@ type AdminTab =
   | 'analytics'
   | 'feature_flags'
   | 'security_audit'
-  | 'faqs';
+  | 'faqs'
+  | 'ai_agents';
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
   isOpen,
@@ -712,6 +715,8 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
 
                 {[
                   { id: 'dashboard', label: 'Dashboard', icon: BarChart3, badge: 'Live' },
+                  { id: 'analytics', label: 'Revenue Management', icon: DollarSign, badge: 'Reports' },
+                  { id: 'ai_agents', label: 'AI Agents', icon: Bot, badge: '3' },
                   { id: 'courses', label: 'Cooking Courses', icon: GraduationCap, flag: activeFeatureFlags.masterclasses },
                   { id: 'recently_viewed', label: 'Recently Viewed', icon: Clock },
                   { id: 'calendar', label: 'Weekly Prep & Calendrier', icon: CalendarDays, badge: `${calendarEvents.length}` },
@@ -935,6 +940,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
                   {activeTab === 'users_roles' && 'Gestion des Utilisateurs & Rôles'}
                   {activeTab === 'messaging' && 'Messagerie Interne & Support Direct'}
                   {activeTab === 'analytics' && 'Statistiques & Extractions de Données'}
+                  {activeTab === 'ai_agents' && 'AI Agents Management'}
                   {activeTab === 'feature_flags' && 'Contrôle des Fonctionnalités (Activation / Désactivation)'}
                   {activeTab === 'saved_recipes' && 'Saved Recipes & Boîte à Recettes'}
                   {activeTab === 'delivery' && 'Afrodelicious Delivery Food & Logistique'}
@@ -2024,6 +2030,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({
               {/* ========================================================== */}
               {/* TAB 6: CONTRÔLE FONCTIONNALITÉS (Activation/Désactivation) */}
               {/* ========================================================== */}
+              {activeTab === 'ai_agents' && (
+                <AIAgentsConfigPanel />
+              )}
               {activeTab === 'feature_flags' && (
                 <div className="space-y-6">
                   
